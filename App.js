@@ -9,7 +9,8 @@ import JoinChallenge from './JoinChallenge';
 import SubmitChallenge from './SubmitChallenge';
 import Header from './components/Header';
 import * as Constant from './Constant';
-import * as firebase from 'firebase'
+import * as firebase from 'firebase';
+import ChallengeRunnder from './ChallengeRunner';
 
 function JoinChallengeScreen() {
   return (
@@ -35,19 +36,14 @@ function RankingScreen() {
 
 const Tab = createBottomTabNavigator();
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAwfuINQBrjzs07LyvEKs1PKthEURPGfp8",
-  authDomain: "social-this-fitting-d30fb.firebaseapp.com",
-  databaseURL: "https://social-this-fitting-d30fb.firebaseio.com",
-  projectId: "social-this-fitting-d30fb",
-  storageBucket: "social-this-fitting-d30fb.appspot.com",
-  messagingSenderId: "522856523662",
-  appId: "1:522856523662:web:b96078f3ad1c1d1c02e6df"
-}
-
-firebase.initializeApp(firebaseConfig)
-
 export default function App() {
+
+  const state = { 
+    userId: 23165,
+    chalengeId: 1,
+    unit: 'step'
+  }
+
   return (
     <View style={styles.container}>
       {/* <Text>Hello, Social This Fitting!</Text> */}
@@ -81,6 +77,13 @@ export default function App() {
           <Tab.Screen name="Account" component={AccountScreen} />
         </Tab.Navigator>
       </NavigationContainer>
+      <StatusBar style="auto" />
+      <ChallengeRunnder
+        userId={state.userId}
+        chalengeId={state.chalengeId}
+        unit={state.unit}
+      />
+      {/* <Main /> */}
     </View>
   );
 }

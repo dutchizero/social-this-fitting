@@ -1,20 +1,49 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
-import * as firebase from 'firebase'
 
-import 'firebase/firestore';
+import { getChallengeScore, updateUserChallengeScore } from './firebase/firebaseDB';
 
 export default class ChallengeRunner extends React.Component {
   state={
-    email:"",
-    password:""
+    currentScore: 0,
+    dbh: null,
+    oldScore: 0,
+    challengerScore: {},
+    docId: ''
   }
 
   componentDidMount() {
-    const dbh = firebase.firestore();
-    dbh.collection("UserChallenge").doc("32465465").set({score: 50000});
+    const { chalengeId, userId } = this.props;
+    getChallengeScore(userId, chalengeId).then(data => {
+        if (!data.empty) {
+            data.docs.map(item => {
+                console.log('item.id', item.id);
+                this.setState({docId: item.id});
+                console.log(item.data());
+                this.setState({challengerScore: item.data()})
+            });
+        }
+    });
+  }
+
+  handleSubmitScore = () => {
+    const { userId, chalengeId } = this.props;
+    const { currentScore, challengerScore, docId } = this.state;
+    const currentDate = new Date();
+    const updatedChallengerScore = {
+        ChallengeID: chalengeId,
+        UserID: userId,
+        Unit: challengerScore.Unit,
+        UpdatedAt: currentDate,
+        Score: currentScore
+    }
+    updateUserChallengeScore(docId, updatedChallengerScore);
+  }
+
+  handleScoreChange = (score) => {
+    this.setState({currentScore: score});
   }
 
   render(){
@@ -27,20 +56,12 @@ export default class ChallengeRunner extends React.Component {
         <View style={styles.inputView} >
           <TextInput  
             style={styles.inputText}
-            placeholder="Email" 
+            placeholder="Score" 
             placeholderTextColor="#003f5c"
-            onChangeText={text => this.setState({email:text})}/>
+            onChangeText={score => this.handleScoreChange(score)}/>
         </View>
-        <View style={styles.inputView} >
-          <TextInput  
-            secureTextEntry
-            style={styles.inputText}
-            placeholder="Password" 
-            placeholderTextColor="#003f5c"
-            onChangeText={text => this.setState({password:text})}/>
-        </View>
-        <FontAwesome.Button name="facebook" style={styles.loginBtn} onClick={() => this.handleLoginFacebook()}>
-          <Text style={styles.loginText}>Login with Facebook</Text>
+        <FontAwesome.Button style={styles.loginBtn} onClick={() => { this.handleSubmitScore()}}>
+          <Text style={styles.loginText}>Submit Score</Text>
         </FontAwesome.Button>
       </View>
     );
@@ -53,6 +74,7 @@ const styles = StyleSheet.create({
     backgroundColor: Constant.COLOR_GREY,
     alignItems: 'center',
     justifyContent: 'center',
+    display: 'none'
   },
   logo:{
     fontWeight:"bold",
@@ -72,8 +94,7 @@ const styles = StyleSheet.create({
     height:50,
     marginBottom:20,
     justifyContent:"center",
-    padding:20,
-    display: 'none'
+    padding:20
   },
   inputText:{
     height:50,
@@ -84,7 +105,6 @@ const styles = StyleSheet.create({
     fontSize:11
   },
   loginBtn:{
-    backgroundColor:Constant.COLOR_FACEBOOK,
     borderRadius:5,
     alignItems:"center",
     justifyContent:"center",
