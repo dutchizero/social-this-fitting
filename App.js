@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Login from './Login';
 import JoinChallenge from './JoinChallenge';
+import SubmitChallenge from './SubmitChallenge';
 import Header from './components/Header';
 import * as Constant from './Constant';
 import * as firebase from 'firebase'
