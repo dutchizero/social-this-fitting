@@ -3,15 +3,32 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'reac
 import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
 
-export default class Login extends React.Component {
-  state={
-    email: '',
-    password: ''
-  }
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
-  handleLoginFacebook = () => {
-    console.log('login clicked!');
-  }
+export default class Login extends React.Component {
+  
+
+
+  uiConfig = {
+    // Popup signin flow rather than redirect flow.
+    signInFlow: 'popup',
+    // We will display Google , Facebook , Etc as auth providers.
+    signInOptions: [
+      //firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+      //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+      //firebase.auth.GithubAuthProvider.PROVIDER_ID,
+      //firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    ],
+    callbacks: {
+      // Avoid redirects after sign-in.
+      signInSuccess: () => false
+    }
+  };
+
+
 
   render(){
     return (
@@ -35,11 +52,10 @@ export default class Login extends React.Component {
             placeholderTextColor="#003f5c"
             onChangeText={text => this.setState({password:text})}/>
         </View>
-        <FontAwesome.Button name="facebook" style={styles.loginBtn} onPress={() => this.handleLoginFacebook()}>
-          <Text style={styles.loginText}>Login with Facebook</Text>
-        </FontAwesome.Button>
+        <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()}/>
       </View>
     );
+    
   }
 }
 

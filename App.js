@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -39,28 +39,39 @@ function setBackFunction(backFunction) {
 
 const Tab = createBottomTabNavigator();
 
-export default function App() {
+  export default function App() {
 
-  const state = { 
-    userId: 23165,
-    chalengeId: 1,
-    unit: 'step',
-    isBack: false,
-    backFunction: () => {}
-  }
+    const state = {
+      userId: 23165,
+      chalengeId: 1,
+      unit: 'step',
+      isBack: false,
+      backFunction: () => {}
+    }
+
+    const [isSignedIn, setIsSignedIn] = useState(false);
+
+    useEffect(() => {
+      const unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+        (user) => setIsSignedIn(!!user)
+      );
+      return () => {
+        unregisterAuthObserver()
+      }
+    }, [])
 
   return (
-    <View style={styles.container}>
-      {/* <Text>Hello, Social This Fitting!</Text> */}
-      <StatusBar style="light" />
-      <Header
-        isBack={state.isBack}
-      />
-      <NavigationContainer style={styles.navigator}>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
+      <View style={styles.container}>
+        {/* <Text>Hello, Social This Fitting!</Text> */}
+        {isSignedIn ?
+          (<>
+            <StatusBar style="light" />
+            <Header />
+            <NavigationContainer style={styles.navigator}>
+              <Tab.Navigator
+                screenOptions={({ route }) => ({
+                  tabBarIcon: ({ focused, color, size }) => {
+                    let iconName;
 
               if (route.name === 'Join Challenge') {
                 iconName = focused ? 'rocket' : 'rocket';
@@ -88,17 +99,17 @@ export default function App() {
         userId={state.userId}
         chalengeId={state.chalengeId}
         unit={state.unit}
-      />
-      {/* <Main /> */}
+        /></>) : (<Login></Login>)}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    height: '100%'
-  },
-  navigator: {
-    backgroundColor: Constant.COLOR_GREY
-  }
-});
+  const styles = StyleSheet.create({
+    container: {
+      height: '100%'
+    },
+    navigator: {
+      backgroundColor: Constant.COLOR_GREY
+    }
+  });
+
