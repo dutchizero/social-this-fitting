@@ -39,77 +39,79 @@ function setBackFunction(backFunction) {
 
 const Tab = createBottomTabNavigator();
 
-  export default function App() {
+export default function App() {
 
-    const state = {
-      userId: 23165,
-      chalengeId: 1,
-      unit: 'step',
-      isBack: false,
-      backFunction: () => {}
-    }
+  const state = {
+    userId: 23165,
+    chalengeId: 1,
+    unit: 'step',
+    isBack: false,
+    backFunction: () => { }
+  }
 
-    const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
-    useEffect(() => {
-      const unregisterAuthObserver = firebase.auth().onAuthStateChanged(
-        (user) => setIsSignedIn(!!user)
-      );
-      return () => {
-        unregisterAuthObserver()
+  useEffect(() => {
+    const unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+      (user) => { 
+        setIsSignedIn(!!user);
       }
-    }, [])
+    );
+    return () => {
+      unregisterAuthObserver()
+    }
+  }, [])
 
   return (
-      <View style={styles.container}>
-        {/* <Text>Hello, Social This Fitting!</Text> */}
-        {isSignedIn ?
-          (<>
-            <StatusBar style="light" />
-            <Header />
-            <NavigationContainer style={styles.navigator}>
-              <Tab.Navigator
-                screenOptions={({ route }) => ({
-                  tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
+    <View style={styles.container}>
+      {/* <Text>Hello, Social This Fitting!</Text> */}
+      {isSignedIn ?
+        (<>
+          <StatusBar style="light" />
+          <Header />
+          <NavigationContainer style={styles.navigator}>
+            <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName;
 
-              if (route.name === 'Join Challenge') {
-                iconName = focused ? 'rocket' : 'rocket';
-              } else if (route.name === 'Account') {
-                iconName = focused ? 'user' : 'user';
-              } else if (route.name === 'Ranking') {
-                iconName = focused ? 'trophy' : 'trophy';
-              }
+                  if (route.name === 'Join Challenge') {
+                    iconName = focused ? 'rocket' : 'rocket';
+                  } else if (route.name === 'Account') {
+                    iconName = focused ? 'user' : 'user';
+                  } else if (route.name === 'Ranking') {
+                    iconName = focused ? 'trophy' : 'trophy';
+                  }
 
-              // You can return any component that you like here!
-              return <Icon name={iconName} size={size} color={color} />;
-            },
-          })}
-          tabBarOptions={{
-            activeTintColor: Constant.COLOR_RED,
-            inactiveTintColor: Constant.COLOR_GREY,
-          }}
-        >
-          <Tab.Screen name="Join Challenge" component={ChallengeListScreen}/>
-          <Tab.Screen name="Ranking" component={RankingScreen} />
-          <Tab.Screen name="Account" component={AccountScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
-      <ChallengeRunnder
-        userId={state.userId}
-        chalengeId={state.chalengeId}
-        unit={state.unit}
-        /></>) : (<Login></Login>)}
+                  // You can return any component that you like here!
+                  return <Icon name={iconName} size={size} color={color} />;
+                },
+              })}
+              tabBarOptions={{
+                activeTintColor: Constant.COLOR_RED,
+                inactiveTintColor: Constant.COLOR_GREY,
+              }}
+            >
+              <Tab.Screen name="Join Challenge" component={ChallengeListScreen} />
+              <Tab.Screen name="Ranking" component={RankingScreen} />
+              <Tab.Screen name="Account" component={AccountScreen} />
+            </Tab.Navigator>
+          </NavigationContainer>
+          <ChallengeRunnder
+            userId={state.userId}
+            chalengeId={state.chalengeId}
+            unit={state.unit}
+          /></>) : (<Login/>)}
     </View>
   );
 }
 
-  const styles = StyleSheet.create({
-    container: {
-      height: '100%'
-    },
-    navigator: {
-      backgroundColor: Constant.COLOR_GREY
-    }
-  });
+const styles = StyleSheet.create({
+  container: {
+    height: '100%'
+  },
+  navigator: {
+    backgroundColor: Constant.COLOR_GREY
+  }
+});
 

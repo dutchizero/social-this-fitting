@@ -1,5 +1,7 @@
 import * as firebase from 'firebase';
 import 'firebase/firestore';
+import 'firebase/functions';
+import 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyAwfuINQBrjzs07LyvEKs1PKthEURPGfp8",
@@ -14,16 +16,36 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 
 const db = firebase.firestore();
+const fn = firebase.functions();
+const auth = firebase.auth();
 
-const getChallengeScore = (userID, challengeID) => {
+const getChallengeScoreByUserIDAndChallengeID = (userID, challengeID) => {
     return db.collection('ChallengerScore')
         .where('UserID', '==', userID)
         .where('ChallengeID', '==', challengeID)
         .get();
 }
 
+const getChallengeScoreByUserID = (userID) => {
+    return db.collection('ChallengerScore')
+        .where('UserID', '==', userID)
+        .get();
+}
+
+const getAllChallengeStatus = () => {
+    return db.collection('ChallengeStatus');
+}
+
 const updateUserChallengeScore = (id, challengeScore) => {
     db.collection('ChallengerScore').doc(id).update(challengeScore);
 }
 
-export { getChallengeScore, updateUserChallengeScore };
+const getAllChallenge = () => {
+    return fn.httpsCallable('getAllChallenges')();
+}
+
+const getCurrentUserId = () => {
+    return auth.currentUser.uid;
+}
+
+export { getChallengeScoreByUserIDAndChallengeID, updateUserChallengeScore, getAllChallenge, getChallengeScoreByUserID, getCurrentUserId, getAllChallengeStatus };
