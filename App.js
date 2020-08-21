@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
@@ -21,7 +21,28 @@ function AccountScreen() {
   };
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Account</Text>
+      <Text
+        style={{
+          color: Constant.COLOR_GREY,
+          fontSize: 24,
+          fontWeight: "700",
+          marginBottom: 30,
+        }}
+      >
+        Account
+      </Text>
+      <Image
+        style={{
+          width: 90,
+          height: 90,
+          marginBottom: 20,
+        }}
+        source={require("./assets/user.png")}
+      />
+      <Text style={{ marginBottom: 10 }}>
+        {firebase.auth().currentUser.email}
+      </Text>
+
       <Button title="Logout" onPress={() => handleLogout()}></Button>
     </View>
   );
@@ -43,8 +64,8 @@ export default function App() {
     chalengeId: 1,
     unit: "step",
     isBack: false,
-    backFunction: () => { }
-  }
+    backFunction: () => {},
+  };
 
   const [isSignedIn, setIsSignedIn] = useState(false);
 
@@ -92,10 +113,14 @@ export default function App() {
                 name="Join Challenge"
                 component={ChallengeListScreen}
               />
-              <Tab.Screen name="Ranking" component={RankingScreen} />
+              {/* <Tab.Screen name="Ranking" component={RankingScreen} /> */}
               <Tab.Screen name="Account" component={AccountScreen} />
             </Tab.Navigator>
-          </NavigationContainer></>) : (<Login/>)}
+          </NavigationContainer>
+        </>
+      ) : (
+        <Login />
+      )}
     </View>
   );
 }
