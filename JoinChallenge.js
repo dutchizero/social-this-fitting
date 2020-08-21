@@ -2,111 +2,153 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
+import SubmitChallenge from './SubmitChallenge';
+import { Pedometer } from 'expo-sensors';
+import { getAllChallenge, getCurrentUserId, getChallengeScoreByUserID, getAllChallengeStatus } from './firebase/firebaseDB';
 
 export default class JoinChallenge extends React.Component {
-  render() {
+  state = {
+    challengeList: [],
+    userID: '',
+    myChallengeListId: [],
+    challengeStatusList: []
+  };
+
+  componentDidMount() {
+    getChallengeScoreByUserID(getCurrentUserId()).then(data => {
+      this.setState({myChallengeListId: data.docs.map(item => {
+        return item.data().ChallengeID;
+      })});
+    });
+
+    getAllChallenge().then(challengeList => {
+      this.setState({challengeList: challengeList.data});
+    });
+
+    getAllChallengeStatus().onSnapshot((item) => {
+      this.setState({challengeStatusList: item.docs.map(item1 => { return item1.data() })});
+    });
+  }
+
+  componentWillUnmount() {
+  }
+
+  render(){
+
     const { joinChallenge } = this.props;
-    return (
-      <ScrollView style={styles.container}>
-        <View style={styles.textBlock}>
-          <Text style={styles.titleStyle}>Current Challenge</Text>
-          <Text style={styles.challengeCountStyle}>(1 challenge)</Text>
-        </View>
+    const { myChallengeListId, challengeList, challengeStatusList } = this.state;
 
-        <View style={styles.challengeLoop}>
-          <View style={styles.challengeBox}>
-            <View style={styles.leftBox}>
-              <Image
-                style={styles.challengeIcon}
-                source={require('./assets/img/footprint.png')}
-              />
-              <Text style={styles.textStyleLeft}>Long Walking</Text>
-              <Text style={styles.textStyleLeft}>96 / 100</Text>
-              <Text style={styles.textStyleLeft}>Challengers</Text>
-            </View>
-            <View style={styles.rightBox}>
-              <Text style={styles.challengeTitle}>Ascend Walking Challenge</Text>
-              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
-              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
-            </View>
+    let showChallenge = challengeList.filter(i => i.id == "5f3fc139aec6ec00013b230e")[0];
+
+    if (showChallenge) {
+      const sendShowChallenge = showChallenge;
+      showChallenge = showChallenge.data;
+      
+      return (
+        <ScrollView style={styles.container}>
+          <View style={styles.textBlock}>
+            <Text style={styles.titleStyle}>Current Challenge</Text>
+            <Text style={styles.challengeCountStyle}>(1 challenge)</Text>
           </View>
-          <FontAwesome.Button name="rocket" style={styles.joinButton} onPress={() => joinChallenge()}>
-            <Text style={styles.joinText}>JOIN</Text>
-          </FontAwesome.Button>
-        </View>
-
-        <View style={styles.textBlock}>
-          <Text style={styles.titleStyle}>UpComing Challenge</Text>
-          <Text style={styles.challengeCountStyle}>(1 challenge)</Text>
-        </View>
-
-        <View style={styles.waitChallengeLoop}>
-          <View style={styles.challengeBox}>
-            <View style={styles.leftBox}>
-              <Image
-                style={styles.challengeIcon}
-                source={require('./assets/img/footprint.png')}
-              />
-              <Text style={styles.textStyleLeft}>Long Walking</Text>
-              <Text style={styles.textStyleLeft}>96 / 100</Text>
-              <Text style={styles.textStyleLeft}>Challengers</Text>
+          
+          <View style={styles.challengeLoop}>
+            <View style={styles.challengeBox}>
+              <View style={styles.leftBox}>
+                <Image
+                  style={styles.challengeIcon}
+                  source={require('./assets/img/footprint.png')}
+                />
+                <Text style={styles.textStyleLeft}>Long Walking</Text>
+                <Text style={styles.textStyleLeft}>96 / 100</Text>
+                <Text style={styles.textStyleLeft}>Challengers</Text>
+              </View>
+              <View style={styles.rightBox}>
+                <Text style={styles.challengeTitle}>{showChallenge.ChallengeName}</Text>
+                <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}{showChallenge.WinCondition} {showChallenge.WinConditionValue} {showChallenge.WinConditionUnit}</Text>
+                <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}{showChallenge.WinnerPrize}</Text>
+              </View>
             </View>
-            <View style={styles.rightBox}>
-              <Text style={styles.challengeTitle}>True Walking Challenge</Text>
-              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
-              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
-            </View>
+            <FontAwesome.Button name="rocket" style={styles.joinButton} onPress={() => joinChallenge(sendShowChallenge)}>
+              <Text style={styles.joinText}>JOIN</Text>
+            </FontAwesome.Button>
           </View>
-          <FontAwesome.Button name="rocket" style={styles.waitJoinButton}>
-            <Text style={styles.joinText}>JOIN</Text>
-          </FontAwesome.Button>
-        </View>
-
-        <View style={styles.waitChallengeLoop}>
-          <View style={styles.challengeBox}>
-            <View style={styles.leftBox}>
-              <Image
-                style={styles.challengeIcon}
-                source={require('./assets/img/footprint.png')}
-              />
-              <Text style={styles.textStyleLeft}>Long Walking</Text>
-              <Text style={styles.textStyleLeft}>96 / 100</Text>
-              <Text style={styles.textStyleLeft}>Challengers</Text>
-            </View>
-            <View style={styles.rightBox}>
-              <Text style={styles.challengeTitle}>True Walking Challenge</Text>
-              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
-              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
-            </View>
+  
+          <View style={styles.textBlock}>
+            <Text style={styles.titleStyle}>UpComing Challenge</Text>
+            <Text style={styles.challengeCountStyle}>(1 challenge)</Text>
           </View>
-          <FontAwesome.Button name="rocket" style={styles.waitJoinButton}>
-            <Text style={styles.joinText}>JOIN</Text>
-          </FontAwesome.Button>
-        </View>
-
-        <View style={styles.waitChallengeLoop}>
-          <View style={styles.challengeBox}>
-            <View style={styles.leftBox}>
-              <Image
-                style={styles.challengeIcon}
-                source={require('./assets/img/footprint.png')}
-              />
-              <Text style={styles.textStyleLeft}>Long Walking</Text>
-              <Text style={styles.textStyleLeft}>96 / 100</Text>
-              <Text style={styles.textStyleLeft}>Challengers</Text>
+  
+          <View style={styles.waitChallengeLoop}>
+            <View style={styles.challengeBox}>
+              <View style={styles.leftBox}>
+                <Image
+                  style={styles.challengeIcon}
+                  source={require('./assets/img/footprint.png')}
+                />
+                <Text style={styles.textStyleLeft}>Long Walking</Text>
+                <Text style={styles.textStyleLeft}>96 / 100</Text>
+                <Text style={styles.textStyleLeft}>Challengers</Text>
+              </View>
+              <View style={styles.rightBox}>
+                <Text style={styles.challengeTitle}>True Walking Challenge</Text>
+                <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
+                <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
+              </View>
             </View>
-            <View style={styles.rightBox}>
-              <Text style={styles.challengeTitle}>True Walking Challenge</Text>
-              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
-              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
-            </View>
+            <FontAwesome.Button name="rocket" style={styles.waitJoinButton}>
+              <Text style={styles.joinText}>JOIN</Text>
+            </FontAwesome.Button>
           </View>
-          <FontAwesome.Button name="rocket" style={styles.waitJoinButton}>
-            <Text style={styles.joinText}>JOIN</Text>
-          </FontAwesome.Button>
-        </View>
-      </ScrollView>
-    );
+  
+          <View style={styles.waitChallengeLoop}>
+            <View style={styles.challengeBox}>
+              <View style={styles.leftBox}>
+                <Image
+                  style={styles.challengeIcon}
+                  source={require('./assets/img/footprint.png')}
+                />
+                <Text style={styles.textStyleLeft}>Long Walking</Text>
+                <Text style={styles.textStyleLeft}>96 / 100</Text>
+                <Text style={styles.textStyleLeft}>Challengers</Text>
+              </View>
+              <View style={styles.rightBox}>
+                <Text style={styles.challengeTitle}>True Walking Challenge</Text>
+                <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
+                <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
+              </View>
+            </View>
+            <FontAwesome.Button name="rocket" style={styles.waitJoinButton}>
+              <Text style={styles.joinText}>JOIN</Text>
+            </FontAwesome.Button>
+          </View>
+  
+          <View style={styles.waitChallengeLoop}>
+            <View style={styles.challengeBox}>
+              <View style={styles.leftBox}>
+                <Image
+                  style={styles.challengeIcon}
+                  source={require('./assets/img/footprint.png')}
+                />
+                <Text style={styles.textStyleLeft}>Long Walking</Text>
+                <Text style={styles.textStyleLeft}>96 / 100</Text>
+                <Text style={styles.textStyleLeft}>Challengers</Text>
+              </View>
+              <View style={styles.rightBox}>
+                <Text style={styles.challengeTitle}>True Walking Challenge</Text>
+                <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
+                <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
+              </View>
+            </View>
+            <FontAwesome.Button name="rocket" style={styles.waitJoinButton}>
+              <Text style={styles.joinText}>JOIN</Text>
+            </FontAwesome.Button>
+          </View>
+        </ScrollView>
+      )
+    } else {
+      return (<View></View>)
+    }
+    
   }
 }
 

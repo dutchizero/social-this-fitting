@@ -7,28 +7,33 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
+import { Facebook } from 'expo';
+
 export default class Login extends React.Component {
+
+  handleLoginFacebook = () => {
+    loginWithFacebook();
+  }
+
+  loginWithFacebook = async () => {
+    await Facebook.initializeAsync(
+       '618372385511527',
+    );
   
-
-
-  uiConfig = {
-    // Popup signin flow rather than redirect flow.
-    signInFlow: 'popup',
-    // We will display Google , Facebook , Etc as auth providers.
-    signInOptions: [
-      //firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      //firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-      //firebase.auth.GithubAuthProvider.PROVIDER_ID,
-      //firebase.auth.EmailAuthProvider.PROVIDER_ID,
-    ],
-    callbacks: {
-      // Avoid redirects after sign-in.
-      signInSuccess: () => false
+    const { type, token } = await Facebook.logInWithReadPermissionsAsync(
+      { permissions: ['public_profile'] }
+    );
+  
+    if (type === 'success') {
+      // Build Firebase credential with the Facebook access token.
+      const credential = firebase.auth.FacebookAuthProvider.credential(token);
+  
+      // Sign in with credential from the Facebook user.
+      firebase.auth().signInWithCredential(credential).catch((error) => {
+        // Handle Errors here.
+      });
     }
-  };
-
-
+  }
 
   render(){
     return (
@@ -52,7 +57,9 @@ export default class Login extends React.Component {
             placeholderTextColor="#003f5c"
             onChangeText={text => this.setState({password:text})}/>
         </View>
-        <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()}/>
+        <FontAwesome.Button name="facebook" style={styles.loginBtn} onClick={() => this.loginWithFacebook()}>
+          <Text style={styles.loginText}>Login with Facebook</Text>
+        </FontAwesome.Button>
       </View>
     );
     

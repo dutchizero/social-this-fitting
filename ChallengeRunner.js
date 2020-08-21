@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'reac
 import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
 
-import { getChallengeScore, updateUserChallengeScore } from './firebase/firebaseDB';
+import { getChallengeScoreByUserIDAndChallengeID, updateUserChallengeScore } from './firebase/firebaseDB';
 
 export default class ChallengeRunner extends React.Component {
   state={
@@ -16,12 +16,10 @@ export default class ChallengeRunner extends React.Component {
 
   componentDidMount() {
     const { chalengeId, userId } = this.props;
-    getChallengeScore(userId, chalengeId).then(data => {
+    getChallengeScoreByUserIDAndChallengeID(userId, chalengeId).then(data => {
         if (!data.empty) {
             data.docs.map(item => {
-                console.log('item.id', item.id);
                 this.setState({docId: item.id});
-                console.log(item.data());
                 this.setState({challengerScore: item.data()})
             });
         }
