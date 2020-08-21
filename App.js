@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -47,39 +47,53 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 
 export default function App() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    const unregisterAuthObserver = firebase.auth().onAuthStateChanged(
+      (user) => setIsSignedIn(!!user)
+    );
+    return () => {
+      unregisterAuthObserver()
+    }
+  }, [])
+
   return (
     <View style={styles.container}>
       {/* <Text>Hello, Social This Fitting!</Text> */}
-      <StatusBar style="light" />
-      <Header />
-      <NavigationContainer style={styles.navigator}>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
+      {isSignedIn ?
+        (<>
+          <StatusBar style="light" />
+          <Header />
+          <NavigationContainer style={styles.navigator}>
+            <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName;
 
-              if (route.name === 'Join Challenge') {
-                iconName = focused ? 'rocket' : 'rocket';
-              } else if (route.name === 'Account') {
-                iconName = focused ? 'user' : 'user';
-              } else if (route.name === 'Ranking') {
-                iconName = focused ? 'trophy' : 'trophy';
-              }
+                  if (route.name === 'Join Challenge') {
+                    iconName = focused ? 'rocket' : 'rocket';
+                  } else if (route.name === 'Account') {
+                    iconName = focused ? 'user' : 'user';
+                  } else if (route.name === 'Ranking') {
+                    iconName = focused ? 'trophy' : 'trophy';
+                  }
 
-              // You can return any component that you like here!
-              return <Icon name={iconName} size={size} color={color} />;
-            },
-          })}
-          tabBarOptions={{
-            activeTintColor: Constant.COLOR_RED,
-            inactiveTintColor: Constant.COLOR_GREY,
-          }}
-        >
-          <Tab.Screen name="Join Challenge" component={JoinChallengeScreen}/>
-          <Tab.Screen name="Ranking" component={RankingScreen} />
-          <Tab.Screen name="Account" component={AccountScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
+                  // You can return any component that you like here!
+                  return <Icon name={iconName} size={size} color={color} />;
+                },
+              })}
+              tabBarOptions={{
+                activeTintColor: Constant.COLOR_RED,
+                inactiveTintColor: Constant.COLOR_GREY,
+              }}
+            >
+              <Tab.Screen name="Join Challenge" component={JoinChallengeScreen} />
+              <Tab.Screen name="Ranking" component={RankingScreen} />
+              <Tab.Screen name="Account" component={AccountScreen} />
+            </Tab.Navigator>
+          </NavigationContainer> </>) : (<Login></Login>)}
+
     </View>
   );
 }
