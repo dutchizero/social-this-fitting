@@ -5,16 +5,15 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Login from './Login';
-import JoinChallenge from './JoinChallenge';
-import SubmitChallenge from './SubmitChallenge';
+import ChallengeList from './ChallengeList';
 import Header from './components/Header';
 import * as Constant from './Constant';
 import * as firebase from 'firebase';
 import ChallengeRunnder from './ChallengeRunner';
 
-function JoinChallengeScreen() {
+function ChallengeListScreen() {
   return (
-    <JoinChallenge />
+    <ChallengeList />
   );
 }
 
@@ -34,6 +33,10 @@ function RankingScreen() {
   );
 }
 
+function setBackFunction(backFunction) {
+  App.state.backFunction = backFunction;
+}
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -41,14 +44,18 @@ export default function App() {
   const state = { 
     userId: 23165,
     chalengeId: 1,
-    unit: 'step'
+    unit: 'step',
+    isBack: false,
+    backFunction: () => {}
   }
 
   return (
     <View style={styles.container}>
       {/* <Text>Hello, Social This Fitting!</Text> */}
       <StatusBar style="light" />
-      <Header />
+      <Header
+        isBack={state.isBack}
+      />
       <NavigationContainer style={styles.navigator}>
         <Tab.Navigator
           screenOptions={({ route }) => ({
@@ -72,12 +79,11 @@ export default function App() {
             inactiveTintColor: Constant.COLOR_GREY,
           }}
         >
-          <Tab.Screen name="Join Challenge" component={JoinChallengeScreen}/>
+          <Tab.Screen name="Join Challenge" component={ChallengeListScreen}/>
           <Tab.Screen name="Ranking" component={RankingScreen} />
           <Tab.Screen name="Account" component={AccountScreen} />
         </Tab.Navigator>
       </NavigationContainer>
-      <StatusBar style="auto" />
       <ChallengeRunnder
         userId={state.userId}
         chalengeId={state.chalengeId}

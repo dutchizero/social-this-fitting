@@ -35,7 +35,7 @@ export default class Login extends React.Component {
             placeholderTextColor="#003f5c"
             onChangeText={text => this.setState({password:text})}/>
         </View>
-        <FontAwesome.Button name="facebook" style={styles.loginBtn} onClick={() => this.handleLoginFacebook()}>
+        <FontAwesome.Button name="facebook" style={styles.loginBtn} onPress={() => this.handleLoginFacebook()}>
           <Text style={styles.loginText}>Login with Facebook</Text>
         </FontAwesome.Button>
       </View>
