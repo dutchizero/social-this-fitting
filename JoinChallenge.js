@@ -2,11 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
-import SubmitChallenge from './SubmitChallenge';
-
-function handleJoinChallenge() {
-  console.log('abcd');
-}
 
 export default class JoinChallenge extends React.Component {
   render() {

@@ -33,10 +33,6 @@ function RankingScreen() {
   );
 }
 
-function setBackFunction(backFunction) {
-  App.state.backFunction = backFunction;
-}
-
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -45,17 +41,12 @@ export default function App() {
     userId: 23165,
     chalengeId: 1,
     unit: 'step',
-    isBack: false,
-    backFunction: () => {}
+    isBack: false
   }
 
   return (
     <View style={styles.container}>
-      {/* <Text>Hello, Social This Fitting!</Text> */}
       <StatusBar style="light" />
-      <Header
-        isBack={state.isBack}
-      />
       <NavigationContainer style={styles.navigator}>
         <Tab.Navigator
           screenOptions={({ route }) => ({
