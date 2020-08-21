@@ -9,7 +9,8 @@ import Header from './components/Header';
 export default class ChallengeList extends React.Component {
   state = {
     renderComponent: 'join',
-    isBack: false
+    isBack: false,
+    selectedChallenge: {}
   };
 
   componentDidMount() {
@@ -21,10 +22,11 @@ export default class ChallengeList extends React.Component {
     });
   }
 
-  goToSubmit = () => {
+  goToSubmit = (selectedChallenge) => {
     this.setState({
       renderComponent: 'submit',
-      isBack: true
+      isBack: true,
+      selectedChallenge: selectedChallenge
     });
   }
 
@@ -41,6 +43,10 @@ export default class ChallengeList extends React.Component {
     });
   }
 
+  setChallenge = (selectedChallenge) => {
+
+  }
+
   render(){
     return (
       <View>
@@ -50,10 +56,13 @@ export default class ChallengeList extends React.Component {
         />
         {
           this.state.renderComponent === 'submit' ? (
-            <SubmitChallenge />
+            <SubmitChallenge
+              selectedChallenge={this.state.selectedChallenge}
+              goToJoin={this.goToJoin}
+            />
           ) : (
             <JoinChallenge
-              joinChallenge={() => this.goToSubmit()}
+              joinChallenge={(selectedChallenge) => this.goToSubmit(selectedChallenge)}
             />
           )
         }

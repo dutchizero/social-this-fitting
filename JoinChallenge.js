@@ -1,6 +1,13 @@
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import * as Constant from "./Constant";
 import {
   getAllChallenge,
@@ -15,6 +22,7 @@ export default class JoinChallenge extends React.Component {
     userID: "",
     myChallengeListId: [],
     challengeStatusList: [],
+    refreshing: false,
   };
 
   componentDidMount() {
@@ -54,9 +62,22 @@ export default class JoinChallenge extends React.Component {
     )[0];
 
     if (showChallenge) {
+      const sendShowChallenge = showChallenge;
       showChallenge = showChallenge.data;
+
       return (
-        <ScrollView style={styles.container}>
+        <ScrollView
+          style={styles.container}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => {
+                this.setState({ refreshing: true });
+                setTimeout(() => this.setState({ refreshing: false }), 1100);
+              }}
+            ></RefreshControl>
+          }
+        >
           <View style={styles.textBlock}>
             <Text style={styles.titleStyle}>Current Challenge</Text>
             <Text style={styles.challengeCountStyle}>(1 challenge)</Text>
@@ -91,7 +112,7 @@ export default class JoinChallenge extends React.Component {
             <FontAwesome.Button
               name="rocket"
               style={styles.joinButton}
-              onPress={() => joinChallenge()}
+              onPress={() => joinChallenge(sendShowChallenge)}
             >
               <Text style={styles.joinText}>JOIN</Text>
             </FontAwesome.Button>

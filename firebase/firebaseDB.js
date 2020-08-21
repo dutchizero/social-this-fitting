@@ -2,6 +2,7 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 import 'firebase/functions';
 import 'firebase/auth';
+import { Directions } from 'react-native-gesture-handler';
 
 const firebaseConfig = {
     apiKey: "AIzaSyAwfuINQBrjzs07LyvEKs1PKthEURPGfp8",
@@ -32,6 +33,12 @@ const getChallengeScoreByUserID = (userID) => {
         .get();
 }
 
+const getRealTimeChallengeScoreByUserID = (userID, challengeID) => {
+    return db.collection('ChallengerScore')
+        .where('UserID', '==', userID)
+        .where('ChallengeID', '==', challengeID);
+}
+
 const getAllChallengeStatus = () => {
     return db.collection('ChallengeStatus');
 }
@@ -45,7 +52,13 @@ const getAllChallenge = () => {
 }
 
 const getCurrentUserId = () => {
-    return auth.currentUser.uid;
+    //return auth.currentUser.uid;
+    return "7lAA4sofcyeZvDVONYFGUJvtnKh1";
 }
 
-export { getChallengeScoreByUserIDAndChallengeID, updateUserChallengeScore, getAllChallenge, getChallengeScoreByUserID, getCurrentUserId, getAllChallengeStatus };
+const getRealTimeHiestScore = (challengeID) => {
+    return db.collection('ChallengerScore')
+        .where('ChallengeID', '==', challengeID).orderBy("Score", "desc").limit(1);
+}
+
+export { getChallengeScoreByUserIDAndChallengeID, updateUserChallengeScore, getAllChallenge, getChallengeScoreByUserID, getCurrentUserId, getAllChallengeStatus, getRealTimeChallengeScoreByUserID, getRealTimeHiestScore };

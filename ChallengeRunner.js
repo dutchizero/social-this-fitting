@@ -19,9 +19,7 @@ export default class ChallengeRunner extends React.Component {
     getChallengeScoreByUserIDAndChallengeID(userId, chalengeId).then(data => {
         if (!data.empty) {
             data.docs.map(item => {
-                console.log('item.id', item.id);
                 this.setState({docId: item.id});
-                console.log(item.data());
                 this.setState({challengerScore: item.data()})
             });
         }

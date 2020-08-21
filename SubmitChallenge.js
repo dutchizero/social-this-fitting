@@ -3,16 +3,28 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ScrollView 
 import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
 import { Pedometer } from 'expo-sensors';
+import { getCurrentUserId, updateUserChallengeScore, getChallengeScoreByUserIDAndChallengeID, getRealTimeChallengeScoreByUserID, getRealTimeHiestScore } from './firebase/firebaseDB';
 
 export default class SubmitChallenge extends React.Component {
   state = {
     isPedometerAvailable: 'checking',
     pastStepCount: 0,
-    currentStepCount: 0
+    currentStepCount: 0,
+    docId: 'eBNPbcvCZ2yir640KcFK',
+    challengerScore: 0,
+    hiestScore: 0
   };
 
   componentDidMount() {
     this._subscribe();
+    getRealTimeChallengeScoreByUserID(getCurrentUserId(), this.props.selectedChallenge.id).onSnapshot((item) => {
+      this.setState({challengerScore: item.docs.map(item1 => { return item1.data().Score })[0]});
+      //this.setState({docId: item.docs.map(item1 => { return item1.id })})[0];
+    });
+    // getRealTimeHiestScore(this.props.selectedChallenge.id).get().then((item) => {
+    //   this.setState({challengerScore: item.docs.map(item1 => { return item1.data().Score })[0]});
+    //   console.log('this.state.hiestScore', this.state.hiestScore);
+    // });
   }
 
   componentWillUnmount() {
@@ -40,8 +52,7 @@ export default class SubmitChallenge extends React.Component {
     );
 
     const end = new Date();
-    const start = new Date();
-    start.setDate(end.getDate() - 5);
+    const start = new Date(this.props.selectedChallenge.data.ChallengeStartAt);
     Pedometer.getStepCountAsync(start, end).then(
       result => {
         this.setState({ pastStepCount: result.steps });
@@ -59,6 +70,22 @@ export default class SubmitChallenge extends React.Component {
     this._subscription = null;
   };
 
+  handleSubmitScore = () => {
+    const { selectedChallenge } = this.props;
+    const { challengerScore, docId, currentStepCount } = this.state;
+    const currentDate = new Date();
+    const updatedChallengerScore = {
+        ChallengeID: selectedChallenge.id,
+        UserID: getCurrentUserId(),
+        Unit: selectedChallenge.data.WinConditionUnit,
+        UpdatedAt: currentDate,
+        Score: currentStepCount + challengerScore
+    }
+    updateUserChallengeScore(docId, updatedChallengerScore);
+    this.setState({currentStepCount: 0});
+    this.props.goToJoin();
+  }
+
   render(){
     return (
       <ScrollView style={styles.container}>
@@ -75,14 +102,14 @@ export default class SubmitChallenge extends React.Component {
         </View>
         <View style={styles.rankingBlock}>
           <Text style={styles.rankText}>Your Rank:{"\n"}3/96</Text>
-          <Text style={styles.rankTextSmall}>(#1: 8,990 steps)</Text>
+          <Text style={styles.rankTextSmall}>(#1: {this.state.hiestScore} steps)</Text>
         </View>
         <View style={styles.contentBlock}>
-          <Text style={styles.textStyle}>Your Total Step: <Text style={{fontWeight: "bold"}}>{this.state.pastStepCount}</Text></Text>
+          <Text style={styles.textStyle}>Your Total Step: <Text style={{fontWeight: "bold"}}>{this.state.challengerScore}</Text></Text>
           <Text style={styles.textStyleLast}>Your Step Today: <Text style={{fontWeight: "bold", color: Constant.COLOR_RED}}>{this.state.currentStepCount}</Text></Text>
         </View>
         <View style={styles.submitBlock}>
-          <FontAwesome.Button name="rocket" style={styles.submitButton} onPress={() => {}}>
+          <FontAwesome.Button name="rocket" style={styles.submitButton} onPress={() => {this.handleSubmitScore()}}>
             <Text style={styles.submitText}>SUBMIT</Text>
           </FontAwesome.Button>
         </View>

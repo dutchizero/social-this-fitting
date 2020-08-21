@@ -38,14 +38,15 @@ function RankingScreen() {
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  
   const state = {
     userId: 23165,
     chalengeId: 1,
     unit: "step",
     isBack: false,
-  };
+    backFunction: () => { }
+  }
+
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     const unregisterAuthObserver = firebase
@@ -94,16 +95,7 @@ export default function App() {
               <Tab.Screen name="Ranking" component={RankingScreen} />
               <Tab.Screen name="Account" component={AccountScreen} />
             </Tab.Navigator>
-          </NavigationContainer>
-          <ChallengeRunnder
-            userId={state.userId}
-            chalengeId={state.chalengeId}
-            unit={state.unit}
-          />
-        </>
-      ) : (
-        <Login />
-      )}
+          </NavigationContainer></>) : (<Login/>)}
     </View>
   );
 }
