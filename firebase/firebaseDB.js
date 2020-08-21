@@ -57,8 +57,7 @@ const getCurrentUserId = () => {
 }
 
 const getRealTimeHiestScore = (challengeID) => {
-    return db.collection('ChallengerScore')
-        .where('ChallengeID', '==', challengeID).orderBy("Score", "desc").limit(1);
+    return db.collection('ChallengerScore').where('ChallengeID', '==', challengeID);
 }
 
 export { getChallengeScoreByUserIDAndChallengeID, updateUserChallengeScore, getAllChallenge, getChallengeScoreByUserID, getCurrentUserId, getAllChallengeStatus, getRealTimeChallengeScoreByUserID, getRealTimeHiestScore };

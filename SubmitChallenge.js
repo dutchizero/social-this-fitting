@@ -12,7 +12,8 @@ export default class SubmitChallenge extends React.Component {
     currentStepCount: 0,
     docId: 'eBNPbcvCZ2yir640KcFK',
     challengerScore: 0,
-    hiestScore: 0
+    hiestScore: 0,
+    allChallenger: 0
   };
 
   componentDidMount() {
@@ -21,10 +22,12 @@ export default class SubmitChallenge extends React.Component {
       this.setState({challengerScore: item.docs.map(item1 => { return item1.data().Score })[0]});
       //this.setState({docId: item.docs.map(item1 => { return item1.id })})[0];
     });
-    // getRealTimeHiestScore(this.props.selectedChallenge.id).get().then((item) => {
-    //   this.setState({challengerScore: item.docs.map(item1 => { return item1.data().Score })[0]});
-    //   console.log('this.state.hiestScore', this.state.hiestScore);
-    // });
+    getRealTimeHiestScore(this.props.selectedChallenge.id).onSnapshot((item) => {
+      this.setState({hiestScore: item.docs.map(item1 => { return item1.data().Score }).sort(function (a, b) {
+        return b - a;
+      })[0]});
+      this.setState({allChallenger: item.docs.length});
+    });
   }
 
   componentWillUnmount() {
@@ -101,8 +104,8 @@ export default class SubmitChallenge extends React.Component {
           <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text> 5,000THB GoEat Coupon</Text>
         </View>
         <View style={styles.rankingBlock}>
-          <Text style={styles.rankText}>Your Rank:{"\n"}3/96</Text>
-          <Text style={styles.rankTextSmall}>(#1: {this.state.hiestScore} steps)</Text>
+          <Text style={styles.rankText}>Your Rank:{"\n"}2/{this.state.allChallenger}</Text>
+          <Text style={styles.rankTextSmall}>(#1: {this.state.hiestScore.toLocaleString()} steps)</Text>
         </View>
         <View style={styles.contentBlock}>
           <Text style={styles.textStyle}>Your Total Step: <Text style={{fontWeight: "bold"}}>{this.state.challengerScore}</Text></Text>
