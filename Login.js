@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
 
 export default class Login extends React.Component {
@@ -7,14 +8,22 @@ export default class Login extends React.Component {
     email:"",
     password:""
   }
+
+  handleLoginFacebook = () => {
+    console.log('login clicked!');
+  }
+
   render(){
     return (
       <View style={styles.container}>
-        <Text style={styles.logo}>Social This Fitting</Text>
+        <Image
+          style={styles.logoImg}
+          source={require('./assets/logo.png')}
+        />
         <View style={styles.inputView} >
           <TextInput  
             style={styles.inputText}
-            placeholder="Email..." 
+            placeholder="Email" 
             placeholderTextColor="#003f5c"
             onChangeText={text => this.setState({email:text})}/>
         </View>
@@ -22,15 +31,13 @@ export default class Login extends React.Component {
           <TextInput  
             secureTextEntry
             style={styles.inputText}
-            placeholder="Password..." 
+            placeholder="Password" 
             placeholderTextColor="#003f5c"
             onChangeText={text => this.setState({password:text})}/>
         </View>
-        <TouchableOpacity style={styles.loginBtn}>
-          <Text style={styles.loginText}>LOGIN</Text>
-        </TouchableOpacity>
-
-  
+        <FontAwesome.Button name="facebook" style={styles.loginBtn} onClick={() => this.handleLoginFacebook()}>
+          <Text style={styles.loginText}>Login with Facebook</Text>
+        </FontAwesome.Button>
       </View>
     );
   }
@@ -49,34 +56,40 @@ const styles = StyleSheet.create({
     color:Constant.COLOR_RED,
     marginBottom:40
   },
+  logoImg: {
+    width: 150,
+    height: 150,
+    marginBottom:40
+  },
   inputView:{
     width:"80%",
     backgroundColor:Constant.COLOR_WHITE,
-    borderRadius:25,
+    borderRadius:5,
     height:50,
     marginBottom:20,
     justifyContent:"center",
-    padding:20
+    padding:20,
+    display: 'none'
   },
   inputText:{
     height:50,
-    color:"white"
+    color:Constant.COLOR_GREY,
   },
   forgot:{
-    color:"white",
+    color:Constant.COLOR_GREY,
     fontSize:11
   },
   loginBtn:{
-    width:"80%",
-    backgroundColor:Constant.COLOR_RED,
-    borderRadius:25,
-    height:50,
+    backgroundColor:Constant.COLOR_FACEBOOK,
+    borderRadius:5,
     alignItems:"center",
     justifyContent:"center",
-    marginTop:40,
-    marginBottom:10
+    padding: 15
   },
   loginText:{
-    color:"white"
+    color:"white",
+    fontWeight: '700',
+    paddingLeft: 20,
+    paddingRight: 20
   }
 });
