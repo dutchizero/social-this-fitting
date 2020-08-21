@@ -36,15 +36,15 @@ function RankingScreen() {
 
 const Tab = createBottomTabNavigator();
 
-export default function App() {
-
-  const state = {
-    userId: 23165,
-    chalengeId: 1,
-    unit: 'step'
-  }
 
   export default function App() {
+
+    const state = {
+      userId: 23165,
+      chalengeId: 1,
+      unit: 'step'
+    }
+
     const [isSignedIn, setIsSignedIn] = useState(false);
 
     useEffect(() => {
@@ -114,4 +114,4 @@ export default function App() {
       backgroundColor: Constant.COLOR_GREY
     }
   });
-}
+
