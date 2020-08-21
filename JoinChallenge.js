@@ -1,22 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
-import { Pedometer } from 'expo-sensors';
+import SubmitChallenge from './SubmitChallenge';
+
+function handleJoinChallenge() {
+  console.log('abcd');
+}
 
 export default class JoinChallenge extends React.Component {
-  state = {
-  };
-
-  componentDidMount() {
-  }
-
-  componentWillUnmount() {
-  }
-
-  render(){
+  render() {
+    const { joinChallenge } = this.props;
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.textBlock}>
           <Text style={styles.titleStyle}>Current Challenge</Text>
           <Text style={styles.challengeCountStyle}>(1 challenge)</Text>
@@ -39,7 +35,7 @@ export default class JoinChallenge extends React.Component {
               <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
             </View>
           </View>
-          <FontAwesome.Button name="rocket" style={styles.joinButton}>
+          <FontAwesome.Button name="rocket" style={styles.joinButton} onPress={() => joinChallenge()}>
             <Text style={styles.joinText}>JOIN</Text>
           </FontAwesome.Button>
         </View>
@@ -70,7 +66,51 @@ export default class JoinChallenge extends React.Component {
             <Text style={styles.joinText}>JOIN</Text>
           </FontAwesome.Button>
         </View>
-      </View>
+
+        <View style={styles.waitChallengeLoop}>
+          <View style={styles.challengeBox}>
+            <View style={styles.leftBox}>
+              <Image
+                style={styles.challengeIcon}
+                source={require('./assets/img/footprint.png')}
+              />
+              <Text style={styles.textStyleLeft}>Long Walking</Text>
+              <Text style={styles.textStyleLeft}>96 / 100</Text>
+              <Text style={styles.textStyleLeft}>Challengers</Text>
+            </View>
+            <View style={styles.rightBox}>
+              <Text style={styles.challengeTitle}>True Walking Challenge</Text>
+              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
+              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
+            </View>
+          </View>
+          <FontAwesome.Button name="rocket" style={styles.waitJoinButton}>
+            <Text style={styles.joinText}>JOIN</Text>
+          </FontAwesome.Button>
+        </View>
+
+        <View style={styles.waitChallengeLoop}>
+          <View style={styles.challengeBox}>
+            <View style={styles.leftBox}>
+              <Image
+                style={styles.challengeIcon}
+                source={require('./assets/img/footprint.png')}
+              />
+              <Text style={styles.textStyleLeft}>Long Walking</Text>
+              <Text style={styles.textStyleLeft}>96 / 100</Text>
+              <Text style={styles.textStyleLeft}>Challengers</Text>
+            </View>
+            <View style={styles.rightBox}>
+              <Text style={styles.challengeTitle}>True Walking Challenge</Text>
+              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Rule:</Text> {"\n"}First 100,000 steps</Text>
+              <Text style={styles.challengeDesc}><Text style={{fontWeight: "bold"}}>Reward:</Text>  {"\n"}5,000THB GoEat Coupon</Text>
+            </View>
+          </View>
+          <FontAwesome.Button name="rocket" style={styles.waitJoinButton}>
+            <Text style={styles.joinText}>JOIN</Text>
+          </FontAwesome.Button>
+        </View>
+      </ScrollView>
     );
   }
 }
@@ -88,7 +128,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 30,
+    marginTop: 20,
     marginBottom: 3
   },
   leftBox: {
