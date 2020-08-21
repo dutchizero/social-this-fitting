@@ -5,8 +5,8 @@ import * as Constant from './Constant';
 
 export default class Login extends React.Component {
   state={
-    email:"",
-    password:""
+    email: '',
+    password: ''
   }
 
   handleLoginFacebook = () => {
