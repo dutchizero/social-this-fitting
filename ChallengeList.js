@@ -4,34 +4,60 @@ import { FontAwesome } from '@expo/vector-icons';
 import * as Constant from './Constant';
 import JoinChallenge from './JoinChallenge';
 import SubmitChallenge from './SubmitChallenge';
+import Header from './components/Header';
 
 export default class ChallengeList extends React.Component {
   state = {
-    render: 'join'
+    renderComponent: 'join',
+    isBack: false
   };
 
   componentDidMount() {
   }
 
   componentWillUnmount() {
+    this.setState({
+      renderComponent: 'join'
+    });
   }
 
-  handleJoinChallenge = () => {
-    console.log('abcd');
+  goToSubmit = () => {
     this.setState({
-      render: 'submit'
+      renderComponent: 'submit',
+      isBack: true
+    });
+  }
+
+  setBackState = (isBack) => {
+    this.setState({
+      isBack
+    });
+  }
+
+  goToJoin = () => {
+    this.setState({
+      renderComponent: 'join',
+      isBack: false
     });
   }
 
   render(){
     return (
-      this.state.render === 'submit' ? (
-          <SubmitChallenge />
-      ) : (
-        <JoinChallenge
-          joinChallenge={this.handleJoinChallenge}
+      <View>
+        <Header
+          isBack={this.state.isBack}
+          backFunction={() => this.goToJoin()}
         />
-      )
+        {
+          this.state.renderComponent === 'submit' ? (
+            <SubmitChallenge />
+          ) : (
+            <JoinChallenge
+              joinChallenge={() => this.goToSubmit()}
+            />
+          )
+        }
+      </View>
     );
   }
 }

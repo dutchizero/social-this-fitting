@@ -35,22 +35,17 @@ function RankingScreen() {
   );
 }
 
-function setBackFunction(backFunction) {
-  App.state.backFunction = backFunction;
-}
-
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  
   const state = {
     userId: 23165,
     chalengeId: 1,
     unit: "step",
     isBack: false,
-    backFunction: () => {},
   };
-
-  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     const unregisterAuthObserver = firebase
@@ -69,7 +64,6 @@ export default function App() {
       {isSignedIn ? (
         <>
           <StatusBar style="light" />
-          <Header />
           <NavigationContainer style={styles.navigator}>
             <Tab.Navigator
               screenOptions={({ route }) => ({
