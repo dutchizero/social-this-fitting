@@ -139,23 +139,23 @@ export default class JoinChallenge extends React.Component {
               <View style={styles.leftBox}>
                 <Image
                   style={styles.challengeIcon}
-                  source={require("./assets/img/footprint.png")}
+                  source={require("./assets/img/sleep.png")}
                 />
-                <Text style={styles.textStyleLeft}>Long Walking</Text>
-                <Text style={styles.textStyleLeft}>96 / 100</Text>
+                <Text style={styles.textStyleLeft}>Sleep</Text>
+                <Text style={styles.textStyleLeft}>37 / 100</Text>
                 <Text style={styles.textStyleLeft}>Challengers</Text>
               </View>
               <View style={styles.rightBox}>
                 <Text style={styles.challengeTitle}>
-                  True Walking Challenge
+                Go 2 Bed
                 </Text>
                 <Text style={styles.challengeDesc}>
-                  <Text style={{ fontWeight: "bold" }}>Rule:</Text> {"\n"}First
-                  100,000 steps
+                  <Text style={{ fontWeight: "bold" }}>Rule:</Text> {"\n"}
+                  Highest hour
                 </Text>
                 <Text style={styles.challengeDesc}>
                   <Text style={{ fontWeight: "bold" }}>Reward:</Text> {"\n"}
-                  5,000THB GoEat Coupon
+                  หมอนหลอดเพื่อสุขภาพ
                 </Text>
               </View>
             </View>
@@ -169,23 +169,23 @@ export default class JoinChallenge extends React.Component {
               <View style={styles.leftBox}>
                 <Image
                   style={styles.challengeIcon}
-                  source={require("./assets/img/footprint.png")}
+                  source={require("./assets/img/run.png")}
                 />
-                <Text style={styles.textStyleLeft}>Long Walking</Text>
+                <Text style={styles.textStyleLeft}>Run</Text>
                 <Text style={styles.textStyleLeft}>96 / 100</Text>
                 <Text style={styles.textStyleLeft}>Challengers</Text>
               </View>
               <View style={styles.rightBox}>
                 <Text style={styles.challengeTitle}>
-                  True Walking Challenge
+                Time to Run
                 </Text>
                 <Text style={styles.challengeDesc}>
                   <Text style={{ fontWeight: "bold" }}>Rule:</Text> {"\n"}First
-                  100,000 steps
+                  First 100 km.
                 </Text>
                 <Text style={styles.challengeDesc}>
                   <Text style={{ fontWeight: "bold" }}>Reward:</Text> {"\n"}
-                  5,000THB GoEat Coupon
+                  GoEat Discount coupon
                 </Text>
               </View>
             </View>
