@@ -1,20 +1,16 @@
-import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  Alert,
-} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import * as Constant from "./Constant";
-
 import firebase from "firebase/app";
 import "firebase/auth";
-import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
+import React from "react";
+import {
+  Alert, Image, StyleSheet,
+  Text,
+
+  TextInput, View
+} from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
+import * as Constant from "./Constant";
+
 
 export default class Login extends React.Component {
   state = {};
@@ -40,29 +36,6 @@ export default class Login extends React.Component {
           });
         console.log(error);
       });
-  };
-
-  loginWithFacebook = async () => {
-    await Facebook.initializeAsync("618372385511527");
-
-    const { type, token } = await Facebook.logInWithReadPermissionsAsync({
-      permissions: ["public_profile"],
-    });
-    console.log(type);
-    if (type === "success") {
-      // Build Firebase credential with the Facebook access token.
-      const credential = firebase.auth.FacebookAuthProvider.credential(token);
-      console.log(credential);
-      // Sign in with credential from the Facebook user.
-      firebase
-        .auth()
-        .signInWithCredential(credential)
-        .then((res) => console.log(res))
-        .catch((error) => {
-          console.log(error);
-          // Handle Errors here.
-        });
-    }
   };
 
   render() {
