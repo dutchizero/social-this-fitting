@@ -14,6 +14,8 @@ import {
   getAllChallengeStatus,
   getChallengeScoreByUserID,
   getCurrentUserId,
+  createJoin,
+  getRealTimeHiestScore
 } from "./firebase/firebaseDB";
 import Spinner from "react-native-loading-spinner-overlay";
 
@@ -25,31 +27,38 @@ export default class JoinChallenge extends React.Component {
     challengeStatusList: [],
     refreshing: false,
     isLoading: true,
+    firstRowAllChallenger: 0
   };
 
   componentDidMount() {
-    getChallengeScoreByUserID(getCurrentUserId()).then((data) => {
-      this.setState({
-        myChallengeListId: data.docs.map((item) => {
-          return item.data().ChallengeID;
-        }),
-      });
-    });
+    // getChallengeScoreByUserID(getCurrentUserId()).then(
+    //   (data) => {
+    //     this.setState({
+    //       myChallengeListId: data.docs.map((item) => {
+    //         return item.data().ChallengeID;
+    //       }),
+    //     });
+    //   }
+    // );
 
     getAllChallenge().then((challengeList) => {
       this.setState({ challengeList: challengeList.data });
     });
 
-    getAllChallengeStatus().onSnapshot((item) => {
-      this.setState({
-        challengeStatusList: item.docs.map((item1) => {
-          return item1.data();
-        }),
-      });
-    });
+    // getAllChallengeStatus().onSnapshot((item) => {
+    //   this.setState({
+    //     challengeStatusList: item.docs.map((item1) => {
+    //       return item1.data();
+    //     }),
+    //   });
+    // });
+
+    getRealTimeHiestScore('5f3fc139aec6ec00013b230e').onSnapshot(item => {
+      this.setState({firstRowAllChallenger: item.docs.length});
+    })
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() { }
 
   render() {
     const { joinChallenge } = this.props;
@@ -93,7 +102,7 @@ export default class JoinChallenge extends React.Component {
                   source={require("./assets/img/footprint.png")}
                 />
                 <Text style={styles.textStyleLeft}>Long Walking</Text>
-                <Text style={styles.textStyleLeft}>96 / 100</Text>
+                <Text style={styles.textStyleLeft}>{this.state.firstRowAllChallenger} / {showChallenge.MaxChallenger}</Text>
                 <Text style={styles.textStyleLeft}>Challengers</Text>
               </View>
               <View style={styles.rightBox}>
@@ -121,8 +130,8 @@ export default class JoinChallenge extends React.Component {
           </View>
 
           <View style={styles.textBlock}>
-            <Text style={styles.titleStyle}>UpComing Challenge</Text>
-            <Text style={styles.challengeCountStyle}>(1 challenge)</Text>
+            <Text style={styles.titleStyle}>Up Coming Challenge</Text>
+            <Text style={styles.challengeCountStyle}>(3 challenges)</Text>
           </View>
 
           <View style={styles.waitChallengeLoop}>

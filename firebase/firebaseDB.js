@@ -12,8 +12,8 @@ const firebaseConfig = {
     storageBucket: "social-this-fitting-d30fb.appspot.com",
     messagingSenderId: "522856523662",
     appId: "1:522856523662:web:b96078f3ad1c1d1c02e6df"
-  }
-  
+}
+
 firebase.initializeApp(firebaseConfig)
 
 const db = firebase.firestore();
@@ -52,12 +52,19 @@ const getAllChallenge = () => {
 }
 
 const getCurrentUserId = () => {
-    //return auth.currentUser.uid;
-    return "7lAA4sofcyeZvDVONYFGUJvtnKh1";
+    return auth.currentUser.uid;
+}
+
+const getCurrentUserDisplayName = () => {
+    return auth.currentUser.email;
 }
 
 const getRealTimeHiestScore = (challengeID) => {
     return db.collection('ChallengerScore').where('ChallengeID', '==', challengeID);
 }
 
-export { getChallengeScoreByUserIDAndChallengeID, updateUserChallengeScore, getAllChallenge, getChallengeScoreByUserID, getCurrentUserId, getAllChallengeStatus, getRealTimeChallengeScoreByUserID, getRealTimeHiestScore };
+const createJoin = (docId, challengerScore) => {
+    db.collection('ChallengerScore').doc(docId).set(challengerScore);
+}
+
+export { getChallengeScoreByUserIDAndChallengeID, updateUserChallengeScore, getAllChallenge, getChallengeScoreByUserID, getCurrentUserId, getAllChallengeStatus, getRealTimeChallengeScoreByUserID, getRealTimeHiestScore, createJoin, getCurrentUserDisplayName };
