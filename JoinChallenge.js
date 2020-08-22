@@ -15,6 +15,7 @@ import {
   getChallengeScoreByUserID,
   getCurrentUserId,
 } from "./firebase/firebaseDB";
+import Spinner from "react-native-loading-spinner-overlay";
 
 export default class JoinChallenge extends React.Component {
   state = {
@@ -23,6 +24,7 @@ export default class JoinChallenge extends React.Component {
     myChallengeListId: [],
     challengeStatusList: [],
     refreshing: false,
+    isLoading: true,
   };
 
   componentDidMount() {
@@ -215,7 +217,16 @@ export default class JoinChallenge extends React.Component {
         </ScrollView>
       );
     } else {
-      return <View></View>;
+      return (
+        <View>
+          <Spinner
+            overlayColor="rgba(0, 0, 0, 0.7)"
+            visible={this.state.isLoading}
+            textContent={"Loading..."}
+            textStyle={{ color: "#fff" }}
+          />
+        </View>
+      );
     }
   }
 }
