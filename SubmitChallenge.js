@@ -1,55 +1,82 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import * as Constant from './Constant';
-import { Pedometer } from 'expo-sensors';
-import { getCurrentUserId, updateUserChallengeScore, getCurrentUserDisplayName, getRealTimeChallengeScoreByUserID, getRealTimeHiestScore, createJoin } from './firebase/firebaseDB';
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import * as Constant from "./Constant";
+import { Pedometer } from "expo-sensors";
+import {
+  getCurrentUserId,
+  updateUserChallengeScore,
+  getCurrentUserDisplayName,
+  getRealTimeChallengeScoreByUserID,
+  getRealTimeHiestScore,
+  createJoin,
+} from "./firebase/firebaseDB";
+import { titleCase } from "title-case";
 
 export default class SubmitChallenge extends React.Component {
   state = {
-    isPedometerAvailable: 'checking',
+    isPedometerAvailable: "checking",
     pastStepCount: 0,
     currentStepCount: 0,
     challengerScore: 0,
     hiestScore: 0,
     allChallenger: 0,
-    yourRank: 0
+    yourRank: 0,
   };
 
   componentDidMount() {
     this._subscribe();
-    getRealTimeChallengeScoreByUserID(getCurrentUserId(), this.props.selectedChallenge.id).onSnapshot(
-      (item) => {
-        if (item.docs.length > 0) {
-          this.setState({ challengerScore: item.docs.map(item1 => { return item1.data().Score })[0] });
-        } else {
-          console.log('asdas')
-          var id = getCurrentUserId().toString();
-          var name = getCurrentUserDisplayName();
-          createJoin(`${id}-${this.props.selectedChallenge.id}`,
-            {
-              UserID: id,
-              ChallengeID: this.props.selectedChallenge.id,
-              Score: 0,
-              DisplayName: name
-            });
-          this.setState({ challengerScore: 0 });
-        }
-      });
-    getRealTimeHiestScore(this.props.selectedChallenge.id).onSnapshot((item) => {
-      var sortingScore = item.docs.map(item1 => { return item1.data() }).sort(function (a, b) {
-        return b.Score - a.Score;
-      });
-      var id = getCurrentUserId().toString();
-      for (var i = 0; i < sortingScore.length; i++) {
-        if (sortingScore[i].UserID == id) {
-          this.setState({ yourRank: i+1 });
-          break;
-        }
+    getRealTimeChallengeScoreByUserID(
+      getCurrentUserId(),
+      this.props.selectedChallenge.id
+    ).onSnapshot((item) => {
+      if (item.docs.length > 0) {
+        this.setState({
+          challengerScore: item.docs.map((item1) => {
+            return item1.data().Score;
+          })[0],
+        });
+      } else {
+        console.log("asdas");
+        var id = getCurrentUserId().toString();
+        var name = getCurrentUserDisplayName();
+        createJoin(`${id}-${this.props.selectedChallenge.id}`, {
+          UserID: id,
+          ChallengeID: this.props.selectedChallenge.id,
+          Score: 0,
+          DisplayName: name,
+        });
+        this.setState({ challengerScore: 0 });
       }
-      this.setState({ hiestScore: sortingScore[0].Score });
-      this.setState({ allChallenger: sortingScore.length });
     });
+    getRealTimeHiestScore(this.props.selectedChallenge.id).onSnapshot(
+      (item) => {
+        var sortingScore = item.docs
+          .map((item1) => {
+            return item1.data();
+          })
+          .sort(function (a, b) {
+            return b.Score - a.Score;
+          });
+        var id = getCurrentUserId().toString();
+        for (var i = 0; i < sortingScore.length; i++) {
+          if (sortingScore[i].UserID == id) {
+            this.setState({ yourRank: i + 1 });
+            break;
+          }
+        }
+        this.setState({ hiestScore: sortingScore[0].Score });
+        this.setState({ allChallenger: sortingScore.length });
+      }
+    );
   }
 
   componentWillUnmount() {
@@ -57,21 +84,21 @@ export default class SubmitChallenge extends React.Component {
   }
 
   _subscribe = () => {
-    this._subscription = Pedometer.watchStepCount(result => {
+    this._subscription = Pedometer.watchStepCount((result) => {
       this.setState({
         currentStepCount: result.steps,
       });
     });
 
     Pedometer.isAvailableAsync().then(
-      result => {
+      (result) => {
         this.setState({
           isPedometerAvailable: String(result),
         });
       },
-      error => {
+      (error) => {
         this.setState({
-          isPedometerAvailable: 'Could not get isPedometerAvailable: ' + error,
+          isPedometerAvailable: "Could not get isPedometerAvailable: " + error,
         });
       }
     );
@@ -79,12 +106,12 @@ export default class SubmitChallenge extends React.Component {
     const end = new Date();
     const start = new Date(this.props.selectedChallenge.data.ChallengeStartAt);
     Pedometer.getStepCountAsync(start, end).then(
-      result => {
+      (result) => {
         this.setState({ pastStepCount: result.steps });
       },
-      error => {
+      (error) => {
         this.setState({
-          pastStepCount: 'Could not get stepCount: ' + error,
+          pastStepCount: "Could not get stepCount: " + error,
         });
       }
     );
@@ -105,12 +132,15 @@ export default class SubmitChallenge extends React.Component {
       UserID: getCurrentUserId(),
       Unit: selectedChallenge.data.WinConditionUnit,
       UpdatedAt: currentDate,
-      Score: currentStepCount + challengerScore
-    }
-    updateUserChallengeScore(`${userId}-${selectedChallenge.id}`, updatedChallengerScore);
+      Score: currentStepCount + challengerScore,
+    };
+    updateUserChallengeScore(
+      `${userId}-${selectedChallenge.id}`,
+      updatedChallengerScore
+    );
     this.setState({ currentStepCount: 0 });
     this.props.goToJoin();
-  }
+  };
 
   render() {
     return (
@@ -118,24 +148,72 @@ export default class SubmitChallenge extends React.Component {
         <View style={styles.titleBlock}>
           <Image
             style={styles.challengeIcon}
-            source={require('./assets/img/footprint.png')}
+            source={require("./assets/img/footprint.png")}
           />
-          <Text style={styles.challengeTitle}>{this.props.selectedChallenge.data.ChallengeName}</Text>
+          <Text style={styles.challengeTitle}>
+            {this.props.selectedChallenge.data.ChallengeName}
+          </Text>
         </View>
         <View style={styles.contentBlock}>
-          <Text style={styles.challengeDesc}><Text style={{ fontWeight: "bold" }}>Rule:</Text> {this.props.selectedChallenge.data.WinCondition} {this.props.selectedChallenge.data.WinConditionValue} {this.props.selectedChallenge.data.WinConditionUnit}</Text>
-          <Text style={styles.challengeDesc}><Text style={{ fontWeight: "bold" }}>Reward:</Text> {this.props.selectedChallenge.data.WinnerPrize}</Text>
+          <Text style={styles.challengeDesc}>
+            <Text style={{ fontWeight: "bold" }}>Rule:</Text>{" "}
+            {this.props.selectedChallenge.data.WinCondition
+              ? `${titleCase(this.props.selectedChallenge.data.WinCondition)} `
+              : ""}
+            {this.props.selectedChallenge.data.WinConditionValue
+              ? `${this.props.selectedChallenge.data.WinConditionValue} `
+              : ""}
+            {this.props.selectedChallenge.data.WinConditionUnit}
+          </Text>
+          <Text style={styles.challengeDesc}>
+            <Text style={{ fontWeight: "bold" }}>Reward:</Text>{" "}
+            {this.props.selectedChallenge.data.WinnerPrize}
+          </Text>
         </View>
         <View style={styles.rankingBlock}>
-          <Text style={styles.rankText}>Your Rank:{"\n"}{this.state.yourRank}/{this.state.allChallenger}</Text>
-          <Text style={styles.rankTextSmall}>(#1: {this.state.hiestScore.toLocaleString()} steps)</Text>
+          <Text style={styles.rankText}>Your Rank</Text>
+          <View
+            style={{
+              alignItems: "flex-start",
+              flexDirection: "row",
+            }}
+          >
+            {this.state.yourRank === 1 && (
+              <Image
+                style={{ width: 28, height: 28, marginRight: 5}}
+                source={require("./assets/img/win.png")}
+              />
+            )}
+            <Text style={{ ...styles.rankText, textAlign: "center" }}>
+              {this.state.yourRank} / {this.state.allChallenger}
+            </Text>
+          </View>
+          <Text style={styles.rankTextSmall}>
+            (1st : {this.state.hiestScore.toLocaleString()} steps)
+          </Text>
         </View>
         <View style={styles.contentBlock}>
-          <Text style={styles.textStyle}>Your Total Step: <Text style={{ fontWeight: "bold" }}>{this.state.challengerScore.toLocaleString()}</Text></Text>
-          <Text style={styles.textStyleLast}>Your Step Today: <Text style={{ fontWeight: "bold", color: Constant.COLOR_RED }}>{this.state.currentStepCount}</Text></Text>
+          <Text style={styles.textStyle}>
+            Your Total Step:{" "}
+            <Text style={{ fontWeight: "bold" }}>
+              {this.state.challengerScore.toLocaleString()}
+            </Text>
+          </Text>
+          <Text style={styles.textStyleLast}>
+            Your Step Now:{" "}
+            <Text style={{ fontWeight: "bold", color: Constant.COLOR_RED }}>
+              {this.state.currentStepCount}
+            </Text>
+          </Text>
         </View>
         <View style={styles.submitBlock}>
-          <FontAwesome.Button name="rocket" style={styles.submitButton} onPress={() => { this.handleSubmitScore() }}>
+          <FontAwesome.Button
+            name="rocket"
+            style={styles.submitButton}
+            onPress={() => {
+              this.handleSubmitScore();
+            }}
+          >
             <Text style={styles.submitText}>SUBMIT</Text>
           </FontAwesome.Button>
         </View>
@@ -148,7 +226,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 40,
     paddingLeft: 20,
-    paddingRight: 20
+    paddingRight: 20,
   },
   challengeIcon: {
     width: 90,
@@ -156,48 +234,49 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   titleBlock: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   challengeTitle: {
     fontSize: 18,
-    fontWeight: '700'
+    fontWeight: "700",
   },
   contentBlock: {
-    paddingLeft: 10
+    paddingLeft: 10,
   },
   challengeDesc: {
-    marginBottom: 5
+    marginBottom: 5,
   },
   rankingBlock: {
     padding: 30,
-    alignItems: 'center'
+    alignItems: "center",
   },
   rankText: {
     fontSize: 22,
-    textAlign: 'center',
-    fontWeight: '700',
+    textAlign: "center",
+    fontWeight: "700",
     color: Constant.COLOR_RED,
-    marginBottom: 5
+    marginBottom: 5,
   },
   textStyle: {
     color: Constant.COLOR_GREY,
-    textAlign: 'center'
+    textAlign: "center",
   },
   textStyleLast: {
     color: Constant.COLOR_GREY,
-    textAlign: 'center',
-    marginBottom: 35
+    textAlign: "center",
+    marginBottom: 35,
+    fontSize: 25,
   },
   submitBlock: {
     width: 180,
-    alignSelf: 'center'
+    alignSelf: "center",
   },
   submitButton: {
     backgroundColor: Constant.COLOR_RED,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   submitText: {
-    color: Constant.COLOR_WHITE
-  }
+    color: Constant.COLOR_WHITE,
+  },
 });
